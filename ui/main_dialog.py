@@ -109,15 +109,23 @@ class MainDialog(QDialog):
         import os
         import subprocess
         
+        pref_dict = {
+            'houdini.exe': 'HOUDINI_USER_PREF_DIR',
+            'maya.exe': 'MAYA_APP_DIR',
+            'nuke.exe': 'NUKE_PATH'
+        }
+        
         path = self.select_app_path_button.text()
         prefs = self.select_pref_button.text()
         python_path = self.select_python_path_button.text()
         file = self.select_file_button.text()
         
+        pref_name = pref_dict[os.path.basename(path)]
+        
         env = os.environ.copy()
         
         if prefs and os.path.exists(prefs):
-            env["MAYA_APP_DIR"] = prefs
+            env[pref_name] = prefs
             
         if python_path and os.path.exists(python_path):
             env["PYTHONPATH"] = python_path
