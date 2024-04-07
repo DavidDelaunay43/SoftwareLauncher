@@ -37,7 +37,7 @@ class MainDialog(QDialog):
     def __init__(self):
         super(MainDialog, self).__init__()
         
-        self.VERSION = '0.0.0'
+        self.VERSION = '1.0.0'
         self.init_ui()
         self.create_widgets()
         self.create_layout()
