@@ -1,20 +1,12 @@
 {
+    "apps": [
+        "software_name"
+    ],
     "software_name": {
         "app_path": "<path>",
         "preferences": "<path>",
         "python_path": "<path>",
         "icon": "<path>",
         "file": "<path>"
-    },
-    "Maya 2023": {
-        "app_path": "C:/Program Files/Autodesk/Maya2023/bin/maya.exe",
-        "preferences": "C:/Users/David/Documents/maya_dev",
-        "python_path": null,
-        "icon": "C:/Program Files/Autodesk/Maya2023/icons/hsMaya.png",
-        "file": null
-    },
-    "apps": [
-        "Maya 2023",
-        "software_name"
-    ]
+    }
 }
