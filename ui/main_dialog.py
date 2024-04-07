@@ -51,6 +51,7 @@ class MainDialog(QDialog):
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setMinimumSize(450, 250)
         self.setStyleSheet(open(os.path.join(os.path.dirname(__file__), "style.css")).read())
+        self.setWindowIcon(QIcon(os.path.join(os.path.dirname(__file__), "icon.ico")))
         
         
     def create_widgets(self):
