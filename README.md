@@ -10,7 +10,7 @@
 
 ### Installation
 - You need to have python and PySide2 installed
-- Put the main folder "SoftwareLauncher" wherever you want on your computer
+- Put the main folder "SoftwareLauncher-main" wherever you want on your computer
 - Move the "SoftwareLauncher" shortcut to your desktop
 
 <img src="https://github.com/DavidDelaunay43/SoftwareLauncher/blob/main/.screenshots/ui.png" alt="drawing" style="margin-right: 10px;">
