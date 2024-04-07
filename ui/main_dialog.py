@@ -4,10 +4,16 @@ from PySide2.QtWidgets import (
     QGridLayout,
     QLabel,
     QComboBox,
-    QPushButton
+    QPushButton,
+    QTabWidget,
+    QWidget,
+    QFileDialog
 )
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QIcon
+   
+import os
+import subprocess
 
 from json_funcs.get_set_funcs import (
     get_app_list,
@@ -15,6 +21,10 @@ from json_funcs.get_set_funcs import (
     get_preferences,
     get_python_path,
     get_file,
+    set_app_path,
+    set_preferences,
+    set_python_path,
+    set_file,
     set_last_app
 )
 
@@ -53,9 +63,10 @@ class MainDialog(QDialog):
         self.select_python_path_label = QLabel('Select python path folder')
         self.select_python_path_button = QPushButton()
         
-        self.select_file_label = QLabel('Select file folder')
+        self.select_file_label = QLabel('Select file')
         self.select_file_button = QPushButton()
         
+        self.add_app_button = QPushButton('Add app')
         self.launch_button = QPushButton('Launch app')
     
     
@@ -63,6 +74,7 @@ class MainDialog(QDialog):
         self.main_layout = QVBoxLayout()
         self.setLayout(self.main_layout)
         
+        # -
         self.grid_layout = QGridLayout()
         self.main_layout.addLayout(self.grid_layout)
         
@@ -81,16 +93,53 @@ class MainDialog(QDialog):
         self.grid_layout.addWidget(self.select_file_label, 4, 0)
         self.grid_layout.addWidget(self.select_file_button, 4, 1)
         
-        self.main_layout.addWidget(self.launch_button)
+        self.grid_layout.addWidget(self.add_app_button, 5, 0)
+        self.grid_layout.addWidget(self.launch_button, 5, 1)
     
     
     def create_connections(self):
         self.select_app_combobox.currentIndexChanged.connect(self.update_widgets)
         self.launch_button.clicked.connect(self.launch_app)
+        
+        self.select_app_path_button.clicked.connect(self.update_button)
+        self.select_pref_button.clicked.connect(self.update_button)
+        self.select_python_path_button.clicked.connect(self.update_button)
+        self.select_file_button.clicked.connect(self.update_button)
+
+
+    def update_button(self):
+        button: QPushButton = self.sender()
+        button_text = button.text()
+        
+        
+        file_dialog = QFileDialog()
+        
+        if button in [self.select_pref_button, self.select_python_path_button]:
+            file_dialog.setOption(QFileDialog.ShowDirsOnly, True) 
+        
+        options = QFileDialog.Options()
+        
+        if button_text:
+            file_dialog.setDirectory(os.path.dirname(button_text))
+            
+        new_path = file_dialog.getExistingDirectory(self, 'Select directory or file', options=options)
+        button.setText(new_path)
+        
+        button_dict = {
+            self.select_app_path_button: set_app_path,
+            self.select_pref_button: set_preferences,
+            self.select_python_path_button: set_python_path,
+            self.select_file_button: set_file
+        }
+        
+        func = button_dict[button]
+        app = self.select_app_combobox.currentText()
+        func(app, new_path)
+
 
     def init_widgets(self):
         app_list = get_app_list()
-        
+        self.select_app_combobox.clear()
         self.select_app_combobox.addItems(app_list)
         
 
@@ -105,9 +154,6 @@ class MainDialog(QDialog):
 
 
     def launch_app(self):
-        
-        import os
-        import subprocess
         
         pref_dict = {
             'houdini.exe': 'HOUDINI_USER_PREF_DIR',
