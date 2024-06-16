@@ -1,6 +1,6 @@
 {
     "apps": [
-        "software_name"
+        "<software_name>"
     ],
     "software_name": {
         "app_path": "<path>",

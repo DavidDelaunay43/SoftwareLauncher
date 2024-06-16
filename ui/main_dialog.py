@@ -6,13 +6,15 @@ from PySide2.QtWidgets import (
     QComboBox,
     QPushButton,
     QLineEdit,
-    QFileDialog
+    QFileDialog,
 )
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QIcon, QPixmap
    
 import os
 import subprocess
+
+from ui.custom_button import CustomButton
 
 from json_funcs.get_set_funcs import (
     get_app_list,
@@ -50,7 +52,7 @@ class MainDialog(QDialog):
         self.setWindowTitle(f'Software launcher - {self.VERSION}')
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setMinimumSize(450, 250)
-        self.setStyleSheet(open(os.path.join(os.path.dirname(__file__), "style.css")).read())
+        #self.setStyleSheet(open(os.path.join(os.path.dirname(__file__), "style.css")).read())
         self.setWindowIcon(QIcon(os.path.join(os.path.dirname(__file__), "icon.ico")))
         
         
@@ -65,16 +67,13 @@ class MainDialog(QDialog):
         self.select_app_path_button = QPushButton()
         
         self.select_pref_label = QLabel('Select pref folder')
-        self.select_pref_button = QPushButton()
+        self.select_pref_button = CustomButton()
         
         self.select_python_path_label = QLabel('Select python path folder')
-        self.select_python_path_button = QPushButton()
+        self.select_python_path_button = CustomButton()
         
         self.select_file_label = QLabel('Select file')
-        self.select_file_button = QPushButton()
-        
-        self.select_icon_label = QLabel('Select icon')
-        self.select_icon_button = QPushButton()
+        self.select_file_button = CustomButton()
         
         self.launch_button = QPushButton('Launch app')
     
@@ -105,9 +104,6 @@ class MainDialog(QDialog):
         self.grid_layout.addWidget(self.select_file_label, 5, 0)
         self.grid_layout.addWidget(self.select_file_button, 5, 1)
         
-        self.grid_layout.addWidget(self.select_icon_label, 6, 0)
-        self.grid_layout.addWidget(self.select_icon_button, 6, 1)
-        
         self.main_layout.addWidget(self.launch_button)
     
     
@@ -121,7 +117,6 @@ class MainDialog(QDialog):
         self.select_pref_button.clicked.connect(self.update_buttons)
         self.select_python_path_button.clicked.connect(self.update_buttons)
         self.select_file_button.clicked.connect(self.update_buttons)
-        self.select_icon_button.clicked.connect(self.update_buttons)
 
 
     def update_buttons(self):
@@ -173,7 +168,6 @@ class MainDialog(QDialog):
         self.select_pref_button.setText(get_preferences(app))
         self.select_python_path_button.setText(get_python_path(app))
         self.select_file_button.setText(get_file(app))
-        self.select_icon_button.setText(get_icon(app))
         
         self.launch_button.setIcon(QIcon(get_icon(app)))
         self.launch_button.setText(f'Launch {app}')
