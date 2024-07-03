@@ -1,7 +1,7 @@
 # SoftwareLauncher
 
 ### Features
-- add applications
+- automatically detects 3d software
 - choose application to launch
 - optional
   - choose custom preferences folder
