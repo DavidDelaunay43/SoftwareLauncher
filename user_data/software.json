@@ -1,5 +1,6 @@
 {
     "apps": [
+        "Maya 2023",
         "<software_name>"
     ],
     "software_name": {
@@ -8,5 +9,12 @@
         "python_path": "<path>",
         "icon": "<path>",
         "file": "<path>"
+    },
+    "Maya 2023": {
+        "app_path": "C:/Program Files/Autodesk/Maya2023/bin/maya.exe",
+        "preferences": "C:/Users/David/Documents/maya",
+        "python_path": "E:/Art/3D/Dev",
+        "icon": null,
+        "file": null
     }
 }

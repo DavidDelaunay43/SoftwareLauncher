@@ -62,12 +62,6 @@ def set_file(app_name: str, path: str):
     dict_to_json(dico, JSON_FILE)
 
 
-def set_icon(app_name: str, path: str):
-    dico = json_to_dict(JSON_FILE)
-    dico[app_name]['icon'] = path
-    dict_to_json(dico, JSON_FILE)
-
-
 def set_last_app(app_name: str):
     if app_name.strip() == '':
         return

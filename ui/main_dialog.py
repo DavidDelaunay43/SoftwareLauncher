@@ -1,12 +1,16 @@
 from PySide2.QtWidgets import (
-    QDialog,
+    QMainWindow,
     QVBoxLayout,
+    QHBoxLayout,
     QGridLayout,
     QLabel,
     QComboBox,
     QPushButton,
     QLineEdit,
     QFileDialog,
+    QTabWidget,
+    QWidget,
+    QRadioButton
 )
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QIcon, QPixmap
@@ -15,111 +19,137 @@ import os
 import subprocess
 
 from ui.custom_button import CustomButton
-
-from json_funcs.get_set_funcs import (
-    get_app_list,
-    get_app_path,
-    get_preferences,
-    get_python_path,
-    get_file,
-    get_icon,
-    set_app_path,
-    set_preferences,
-    set_python_path,
-    set_file,
-    set_icon,
-    set_last_app,
-    add_app
-)
+from logic.app_finder import AppFinder
 
 
-class MainDialog(QDialog):
+class MainWindow(QMainWindow):
+    
+    
+    VERSION = '1.1.0'
+    apps = []
+    paths = []
+    current_app = None
+    current_path = None
+    current_pref = None
+    current_python_path = None
+    current_file = None
     
     
     def __init__(self):
-        super(MainDialog, self).__init__()
+        super(MainWindow, self).__init__()
         
-        self.VERSION = '1.0.0'
         self.init_ui()
         self.create_widgets()
         self.create_layout()
         self.create_connections()
         
-        self.init_widgets()
         
-        
-    def init_ui(self):
-        self.setWindowTitle(f'Software launcher - {self.VERSION}')
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
-        self.setMinimumSize(450, 250)
-        #self.setStyleSheet(open(os.path.join(os.path.dirname(__file__), "style.css")).read())
-        self.setWindowIcon(QIcon(os.path.join(os.path.dirname(__file__), "icon.ico")))
+    def get_app_infos(self):
+        apps = AppFinder()
+        self.app_dict: dict = apps.app_dict
+        for app, app_infos in self.app_dict.items():
+            path = app_infos['path']
+            if not path:
+                continue
+            self.apps.append(app)
+            self.paths.append(path)
         
         
     def create_widgets(self):
-        self.add_app_lineedit = QLineEdit()
-        self.add_app_button = QPushButton('Add app')
-        
-        self.select_app_label = QLabel('Select app')
-        self.select_app_combobox = QComboBox()
-        
-        self.select_app_path_label = QLabel('App path')
-        self.select_app_path_button = QPushButton()
-        
-        self.select_pref_label = QLabel('Select pref folder')
+        # create radio buttons
+        self.get_app_infos()
+        self.radio_buttons = []
+        for app in self.apps:
+            radio_button = QRadioButton(app.capitalize())
+            self.radio_buttons.append(radio_button)
+            
+        # create buttons
+        self.select_pref_label = QLabel('Preferences')
         self.select_pref_button = CustomButton()
         
-        self.select_python_path_label = QLabel('Select python path folder')
+        self.select_python_path_label = QLabel('Python path')
         self.select_python_path_button = CustomButton()
         
-        self.select_file_label = QLabel('Select file')
+        self.select_file_label = QLabel('File path')
         self.select_file_button = CustomButton()
+        self.select_file_button.setMinimumWidth(300)
         
-        self.launch_button = QPushButton('Launch app')
+        self.launch_button = QPushButton('Launch ')
+        self.launch_button.setMinimumHeight(40)
     
     
     def create_layout(self):
-        self.main_layout = QVBoxLayout()
-        self.setLayout(self.main_layout)
+        self.central_widget = QWidget()
+        self.setCentralWidget(self.central_widget)
+        self.central_layout = QVBoxLayout()
+        self.central_widget.setLayout(self.central_layout)
+        self.central_layout.addStretch(1)
         
-        # -
-        self.grid_layout = QGridLayout()
-        self.main_layout.addLayout(self.grid_layout)
+        self.main_layout = QHBoxLayout()
+        self.central_layout.addLayout(self.main_layout)
         
-        self.grid_layout.addWidget(self.add_app_lineedit, 0, 0)
-        self.grid_layout.addWidget(self.add_app_button, 0, 1)
+        self.radio_button_layout = QVBoxLayout()
+        self.main_layout.addLayout(self.radio_button_layout)
+        self.radio_button_layout.setAlignment(Qt.AlignLeft)
         
-        self.grid_layout.addWidget(self.select_app_label, 1, 0)
-        self.grid_layout.addWidget(self.select_app_combobox, 1, 1)
+        for radio_button in self.radio_buttons:
+            self.radio_button_layout.addWidget(radio_button)
+            
+        self.button_layout = QGridLayout()
+        self.main_layout.addLayout(self.button_layout)
         
-        self.grid_layout.addWidget(self.select_app_path_label, 2, 0)
-        self.grid_layout.addWidget(self.select_app_path_button, 2, 1)
+        self.button_layout.addWidget(self.select_pref_label, 0, 0)
+        self.button_layout.addWidget(self.select_pref_button, 0, 1)
         
-        self.grid_layout.addWidget(self.select_pref_label, 3, 0)
-        self.grid_layout.addWidget(self.select_pref_button, 3, 1)
+        self.button_layout.addWidget(self.select_python_path_label, 1, 0)
+        self.button_layout.addWidget(self.select_python_path_button, 1, 1)
         
-        self.grid_layout.addWidget(self.select_python_path_label, 4, 0)
-        self.grid_layout.addWidget(self.select_python_path_button, 4, 1)
+        self.button_layout.addWidget(self.select_file_label, 2, 0)
+        self.button_layout.addWidget(self.select_file_button, 2, 1)
         
-        self.grid_layout.addWidget(self.select_file_label, 5, 0)
-        self.grid_layout.addWidget(self.select_file_button, 5, 1)
-        
-        self.main_layout.addWidget(self.launch_button)
-    
-    
+        self.central_layout.addWidget(self.launch_button)
+
+
     def create_connections(self):
-        self.add_app_button.clicked.connect(self.add_app)
+        radio_button: QPushButton
+        for radio_button in self.radio_buttons:
+            radio_button.toggled.connect(self.update_current_app)
+            radio_button.toggled.connect(self.update_launch_button)
+            
+        self.select_pref_button.clicked.connect(self.update_button)
+        self.select_python_path_button.clicked.connect(self.update_button)
+        self.select_file_button.clicked.connect(self.update_button)
+        self.select_pref_button.clear_action.triggered.connect(self.update_current_pref)
+        self.select_python_path_button.clear_action.triggered.connect(self.update_current_python_path)
+        self.select_file_button.clear_action.triggered.connect(self.update_current_file)
         
-        self.select_app_combobox.currentIndexChanged.connect(self.update_widgets)
         self.launch_button.clicked.connect(self.launch_app)
+    
+    
+    def update_current_app(self):
+        self.current_app = self.sender().text().lower()
+        self.current_path = self.app_dict[self.current_app]['path']
+        print(f'Current app : {self.current_app}')
+        print(f'Current path : {self.current_path}')
         
-        self.select_app_path_button.clicked.connect(self.update_buttons)
-        self.select_pref_button.clicked.connect(self.update_buttons)
-        self.select_python_path_button.clicked.connect(self.update_buttons)
-        self.select_file_button.clicked.connect(self.update_buttons)
-
-
-    def update_buttons(self):
+        
+    def update_current_pref(self):
+        self.current_pref = self.select_pref_button.text()
+    
+    
+    def update_current_python_path(self):
+        self.current_python_path = self.select_python_path_button.text()
+    
+    
+    def update_current_file(self):
+        self.current_file = self.select_file_button.text()
+        
+        
+    def update_launch_button(self):
+        self.launch_button.setText(f'Launch {self.current_app.capitalize()}')
+        
+        
+    def update_button(self):
         button: QPushButton = self.sender()
         button_text = button.text()
 
@@ -136,79 +166,48 @@ class MainDialog(QDialog):
         else:
             new_path, _ = file_dialog.getOpenFileName(self, 'Select file', options=options)
             
-        if new_path:
-            button.setText(new_path)
-            
-            button_dict = {
-                self.select_app_path_button: set_app_path,
-                self.select_pref_button: set_preferences,
-                self.select_python_path_button: set_python_path,
-                self.select_file_button: set_file,
-                self.select_icon_button: set_icon
-            }
-            
-            func = button_dict.get(button)
-            if func:
-                app = self.select_app_combobox.currentText()
-                func(app, new_path)
-
-
-    def init_widgets(self):
-        app_list = get_app_list()
-        self.select_app_combobox.clear()
-        self.select_app_combobox.addItems(app_list)
-        
-
-    def update_widgets(self):
-        app: str = self.select_app_combobox.currentText()
-        if app.strip() == '': return
-        set_last_app(app)
-        
-        self.select_app_path_button.setText(get_app_path(app))
-        self.select_pref_button.setText(get_preferences(app))
-        self.select_python_path_button.setText(get_python_path(app))
-        self.select_file_button.setText(get_file(app))
-        
-        self.launch_button.setIcon(QIcon(get_icon(app)))
-        self.launch_button.setText(f'Launch {app}')
-
-
-    def add_app(self):
-        app_name = self.add_app_lineedit.text()
-        if app_name.strip() == '':
+        if not new_path:
             return
         
-        add_app(app_name)
-        self.init_widgets()
-    
-
-    def launch_app(self):
+        button.setText(new_path)
         
-        pref_dict = {
-            'houdini.exe': 'HOUDINI_USER_PREF_DIR',
-            'maya.exe': 'MAYA_APP_DIR',
-            'nuke.exe': 'NUKE_PATH'
+        button_dict = {
+            self.select_pref_button: self.update_current_pref,
+            self.select_python_path_button: self.update_current_python_path,
+            self.select_file_button: self.update_current_file,
         }
         
-        path = self.select_app_path_button.text()
-        prefs = self.select_pref_button.text()
-        python_path = self.select_python_path_button.text()
-        file = self.select_file_button.text()
+        func = button_dict.get(button)
+        func()
         
-        pref_name = pref_dict[os.path.basename(path)]
         
-        env = os.environ.copy()
+    def launch_app(self):
+        app_args = [self.current_path]
+        if self.current_file:
+            app_args.append(self.current_file)
         
-        if prefs and os.path.exists(prefs):
-            env[pref_name] = prefs
+        pref_dict = {
+            'houdini': 'HOUDINI_USER_PREF_DIR',
+            'maya': 'MAYA_APP_DIR',
+            'nuke': 'NUKE_PATH'
+        }
+        if not self.current_app in ('houdini', 'maya', 'nuke'):
+            subprocess.Popen(app_args)
+            return
             
-        if python_path and os.path.exists(python_path):
-            env["PYTHONPATH"] = python_path
-
-        app_args = [path]
-        
-        if file and os.path.exists(file):
-            app_args.append(file)
-        
-        print(f'subprocess.Popen({app_args}, env={env})')
+        pref_name = pref_dict[self.current_app]
+        env = os.environ.copy()
+        if self.current_pref and os.path.exists(self.current_pref):
+            env[pref_name] = self.current_pref
+        if self.current_python_path and os.path.exists(self.current_python_path):
+            env["PYTHONPATH"] = self.current_python_path
+            
         subprocess.Popen(app_args, env=env)
+
+        
+    def init_ui(self):
+        self.setWindowTitle(f'Software launcher - {self.VERSION}')
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.setMinimumSize(450, 250)
+        self.setStyleSheet(open(os.path.join(os.path.dirname(__file__), "style.css")).read())
+        self.setWindowIcon(QIcon(os.path.join(os.path.dirname(__file__), "icon.ico")))

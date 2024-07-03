@@ -1,57 +1,71 @@
-QDialog {
-    background-color: #1f2937;
-    color: #ffffff;
+/* Style général */
+* {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color: #f0f0f0;
 }
 
+/* Style pour la fenêtre principale */
+QMainWindow {
+    background-color: #af1f1f; /* Gris très foncé */
+}
+
+/* Style pour les widgets centraux */
+QWidget {
+    background-color: #121212; /* Gris foncé */
+    border-radius: 2px;
+    padding: 2px;
+}
+
+/* Style pour les labels */
+QLabel {
+    color: #cccccc;
+    font-weight: bold;
+}
+
+/* Style pour les boutons radio */
+QRadioButton {
+    color: #f0f0f0; /* Couleur claire pour le texte */
+}
+
+/* Style pour les boutons */
 QPushButton {
-    background-color: #2c3e50;
-    color: #ffffff;
-    border: 1px solid #2c3e50;
-    padding: 8px 16px;
-    font-size: 12px;
+    background-color: #2c2c2c; /* Bleu clair */
+    color: white;
+    border: 1px solid #1a1a1a; /* Bordure pour contraste */
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    cursor: pointer;
 }
 
 QPushButton:hover {
-    background-color: #34495e;
+    background-color: #2980b9; /* Bleu légèrement plus foncé pour le hover */
 }
 
-QLabel {
-    color: #ffffff;
-    font-size: 12px;
+/* Style pour les boutons personnalisés */
+CustomButton {
+    background-color: #2c2c2c; /* Bleu clair */
+    color: white;
+    border: 1px solid #1a1a1a; /* Bordure pour contraste */
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
 }
 
-QLineEdit {
-    background-color: #34495e;
-    border: 1px solid #2c3e50;
-    color: #ffffff;
-    padding: 8px;
-    font-size: 12px;
+CustomButton:hover {
+    background-color: #2980b9; /* Bleu légèrement plus foncé pour le hover */
 }
 
-QComboBox {
-    background-color: #34495e;
-    border: 1px solid #2c3e50;
-    color: #ffffff;
-    padding: 8px;
-    font-size: 12px;
-}
-
-QComboBox::drop-down {
-    border: 0px;
-}
-
-QFileDialog {
-    background-color: #1f2937;
-    color: #ffffff;
-}
-
-QFileDialog QPushButton {
-    background-color: #2c3e50;
-    color: #ffffff;
-    border: 1px solid #2c3e50;
-    font-size: 12px;
-}
-
-QFileDialog QPushButton:hover {
-    background-color: #34495e;
+/* Style pour le layout principal */
+QVBoxLayout, QHBoxLayout, QGridLayout {
+    margin: 2px;
 }

@@ -18,7 +18,7 @@ class CustomButton(QPushButton):
         
     def create_context_menu(self):
         self.context_menu = QMenu(self)
-        self.clear_action = QAction('clear', self)
+        self.clear_action = QAction('Clear', self)
         self.context_menu.addAction(self.clear_action)
         self.clear_action.triggered.connect(self.clear_text)
         
