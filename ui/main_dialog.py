@@ -4,11 +4,8 @@ from PySide2.QtWidgets import (
     QHBoxLayout,
     QGridLayout,
     QLabel,
-    QComboBox,
     QPushButton,
-    QLineEdit,
     QFileDialog,
-    QTabWidget,
     QWidget,
     QRadioButton
 )

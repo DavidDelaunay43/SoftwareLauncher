@@ -1,0 +1,68 @@
+{
+    "blender": {
+        "path": null, 
+        "pref": null,
+        "python_path": null,
+        "file": null
+    },
+    "it": {
+        "path": null, 
+        "pref": null,
+        "python_path": null,
+        "file": null
+    },
+    "krita": {
+        "path": null, 
+        "pref": null,
+        "python_path": null,
+        "file": null
+    },
+    "houdini": {
+        "path": null, 
+        "pref": null,
+        "python_path": null,
+        "file": null
+    },
+    "mari": {
+        "path": null, 
+        "pref": null,
+        "python_path": null,
+        "file": null
+    },
+    "maya": {
+        "path": null, 
+        "pref": null,
+        "python_path": null,
+        "file": null
+    },
+    "nuke": {
+        "path": null, 
+        "pref": null,
+        "python_path": null,
+        "file": null
+    },
+    "photoshop": {
+        "path": null, 
+        "pref": null,
+        "python_path": null,
+        "file": null
+    },
+    "substance_designer": {
+        "path": null, 
+        "pref": null,
+        "python_path": null,
+        "file": null
+    },
+    "substance_painter": {
+        "path": null, 
+        "pref": null,
+        "python_path": null,
+        "file": null
+    },
+    "zbrush": {
+        "path": null, 
+        "pref": null,
+        "python_path": null,
+        "file": null
+    }
+}
