@@ -11,10 +11,8 @@ from PySide2.QtWidgets import (
 )
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QIcon, QPixmap
-   
 import os
 import subprocess
-
 from ui.custom_button import CustomButton
 from logic.app_finder import AppFinder
 
