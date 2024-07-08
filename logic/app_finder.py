@@ -1,4 +1,6 @@
+import json
 import os
+from .json_funcs import dict_to_json
 
 
 class AppFinder:
@@ -7,17 +9,17 @@ class AppFinder:
     PROGRAM_FILES = 'C:/Program Files'
     APPS = 'blender', 'it', 'krita', 'houdini', 'maya', 'nuke', 'photoshop', 'substance_designer', 'substance_painter', 'zbrush'
     app_dict = {
-        'blender': {'path': None, 'pref': None},
-        'it': {'path': None, 'pref': None},
-        'krita': {'path': None, 'pref': None},
-        'houdini': {'path': None, 'pref': None},
-        'mari': {'path': None, 'pref': None},
-        'maya': {'path': None, 'pref': None},
-        'nuke': {'path': None, 'pref': None},
-        'photoshop': {'path': None, 'pref': None},
-        'substance_designer': {'path': None, 'pref': None},
-        'substance_painter': {'path': None, 'pref': None},
-        'zbrush': {'path': None, 'pref': None}
+        'blender': {'path': None, 'pref': None, 'python_path': None, 'file': None},
+        'it': {'path': None, 'pref': None, 'python_path': None, 'file': None},
+        'krita': {'path': None, 'pref': None, 'python_path': None, 'file': None},
+        'houdini': {'path': None, 'pref': None, 'python_path': None, 'file': None},
+        'mari': {'path': None, 'pref': None, 'python_path': None, 'file': None},
+        'maya': {'path': None, 'pref': None, 'python_path': None, 'file': None},
+        'nuke': {'path': None, 'pref': None, 'python_path': None, 'file': None},
+        'photoshop': {'path': None, 'pref': None, 'python_path': None, 'file': None},
+        'substance_designer': {'path': None, 'pref': None, 'python_path': None, 'file': None},
+        'substance_painter': {'path': None, 'pref': None, 'python_path': None, 'file': None},
+        'zbrush': {'path': None, 'pref': None, 'python_path': None, 'file': None}
     }
     
     
@@ -36,8 +38,15 @@ class AppFinder:
         self.app_dict['mari']['pref'] = self.find_mari_pref()
         self.app_dict['maya']['pref'] = self.find_maya_pref()
         self.app_dict['nuke']['pref'] = self.find_nuke_pref()
+        
+        if write_json:
+            self.write_json_file(json_file=write_json)
+        
+        
+    def write_json_file(self, json_file: str):
+        dict_to_json(dictionary=self.app_dict, json_file_path=json_file)
+        
             
-    
     def find_directory(self, parent_directory: str, directory_string: str, return_type: str = 'str', exclude_strings = []) -> str:
         directories: list[str] = os.listdir(parent_directory)
         directories_to_return = []
@@ -117,20 +126,20 @@ class AppFinder:
 
     def find_houdini_pref(self) -> str:
         documents_folder: str = os.path.join(os.path.expanduser("~"), 'Documents')
-        return os.path.join(documents_folder, self.find_directory(parent_directory=documents_folder, directory_string='houdini'))
+        return os.path.join(documents_folder, self.find_directory(parent_directory=documents_folder, directory_string='houdini')).replace('\\', '/')
     
     
     def find_maya_pref(self) -> str:
         documents_folder: str = os.path.join(os.path.expanduser("~"), 'Documents')
-        return os.path.join(documents_folder, self.find_directory(parent_directory=documents_folder, directory_string='maya'))
+        return os.path.join(documents_folder, self.find_directory(parent_directory=documents_folder, directory_string='maya')).replace('\\', '/')
     
     
     def find_mari_pref(self) -> str:
-        return os.path.join(os.path.expanduser("~"), '.mari')
+        return os.path.join(os.path.expanduser("~"), '.mari').replace('\\', '/')
     
     
     def find_nuke_pref(self) -> str:
-        return os.path.join(os.path.expanduser("~"), '.nuke')
+        return os.path.join(os.path.expanduser("~"), '.nuke').replace('\\', '/')
 
 
 if __name__ == '__main__':

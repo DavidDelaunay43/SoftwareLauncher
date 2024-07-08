@@ -29,3 +29,15 @@ def dict_to_json(dictionary: dict, json_file_path: str) -> None:
     
     with open(json_file_path, 'w', encoding='utf-8') as file:
         json.dump(dictionary, file, indent=4, ensure_ascii=False)
+        
+        
+def get_value(json_file: str, main_key: str, key: str) -> str:
+    
+    return json_to_dict(json_file_path=json_file).get(main_key).get(key)
+
+
+def set_value(json_file: str, main_key: str, key: str, value: str) -> None:
+    
+    dictionnary: dict = json_to_dict(json_file_path=json_file)
+    dictionnary[main_key][key] = value
+    dict_to_json(dictionary=dictionnary, json_file_path=json_file)

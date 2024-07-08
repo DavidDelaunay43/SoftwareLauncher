@@ -1,66 +1,66 @@
 {
     "blender": {
-        "path": null, 
+        "path": "C:/Program Files/Blender Foundation/Blender 4.1/blender.exe",
         "pref": null,
         "python_path": null,
         "file": null
     },
     "it": {
-        "path": null, 
+        "path": null,
         "pref": null,
         "python_path": null,
         "file": null
     },
     "krita": {
-        "path": null, 
+        "path": "C:/Program Files/Krita (x64)/bin/krita.exe",
         "pref": null,
         "python_path": null,
         "file": null
     },
     "houdini": {
-        "path": null, 
-        "pref": null,
+        "path": "C:/Program Files/Side Effects Software/Houdini20.0.653/bin/houdini.exe",
+        "pref": "C:/Users/David/Documents/houdini20.0",
         "python_path": null,
         "file": null
     },
     "mari": {
-        "path": null, 
-        "pref": null,
+        "path": "C:/Program Files/Mari7.0v2/Bundle/bin/Mari7.0v2.exe",
+        "pref": "C:/Users/David/.mari",
         "python_path": null,
         "file": null
     },
     "maya": {
-        "path": null, 
-        "pref": null,
-        "python_path": null,
-        "file": null
+        "path": "C:/Program Files/Autodesk/Maya2023/bin/maya.exe",
+        "pref": "C:/Users/David/Documents/maya",
+        "python_path": "E:/Art/3D/Dev",
+        "file": "E:/Art/3D/Projets_Perso/ichthyosaurus/scenes/ichthyosaurus_geo_001.ma"
     },
     "nuke": {
-        "path": null, 
-        "pref": null,
+        "path": "C:/Program Files/Nuke15.1v1/Nuke15.1.exe",
+        "pref": "C:/Users/David/.nuke",
         "python_path": null,
         "file": null
     },
     "photoshop": {
-        "path": null, 
+        "path": "C:/Program Files/Adobe/Adobe Photoshop 2023/Photoshop.exe",
         "pref": null,
         "python_path": null,
         "file": null
     },
     "substance_designer": {
-        "path": null, 
+        "path": null,
         "pref": null,
         "python_path": null,
         "file": null
     },
     "substance_painter": {
-        "path": null, 
+        "path": null,
         "pref": null,
         "python_path": null,
         "file": null
     },
     "zbrush": {
-        "path": null, 
+        "path": "C:/Program Files/Maxon ZBrush 2024/ZBrush.exe",
         "pref": null,
         "python_path": null,
         "file": null

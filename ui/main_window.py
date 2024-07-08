@@ -15,12 +15,14 @@ import os
 import subprocess
 from ui.custom_button import CustomButton
 from logic.app_finder import AppFinder
+from logic.json_funcs import get_value, set_value, json_to_dict
 
 
 class MainWindow(QMainWindow):
     
     
     VERSION = '1.1.0'
+    JSON_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'user_data', 'software_launcher_infos.json')
     apps = []
     paths = []
     current_app = None
@@ -40,8 +42,10 @@ class MainWindow(QMainWindow):
         
         
     def get_app_infos(self):
-        apps = AppFinder()
-        self.app_dict: dict = apps.app_dict
+        if not os.path.exists(self.JSON_FILE_PATH):
+            AppFinder(write_json=self.JSON_FILE_PATH)
+            
+        self.app_dict: dict = json_to_dict(self.JSON_FILE_PATH)
         for app, app_infos in self.app_dict.items():
             path = app_infos['path']
             if not path:
@@ -126,18 +130,27 @@ class MainWindow(QMainWindow):
         self.current_path = self.app_dict[self.current_app]['path']
         print(f'Current app : {self.current_app}')
         print(f'Current path : {self.current_path}')
+        self.select_pref_button.setText(get_value(json_file=self.JSON_FILE_PATH, main_key=self.current_app, key='pref'))
+        self.select_python_path_button.setText(get_value(json_file=self.JSON_FILE_PATH, main_key=self.current_app, key='python_path'))
+        self.select_file_button.setText(get_value(json_file=self.JSON_FILE_PATH, main_key=self.current_app, key='file'))
         
         
     def update_current_pref(self):
-        self.current_pref = self.select_pref_button.text()
+        pref: str = self.select_pref_button.text()
+        self.current_pref = pref
+        set_value(json_file=self.JSON_FILE_PATH, main_key=self.current_app, key='pref', value=pref)
     
     
     def update_current_python_path(self):
-        self.current_python_path = self.select_python_path_button.text()
-    
-    
+        python_path: str = self.select_python_path_button.text()
+        self.current_python_path = python_path
+        set_value(json_file=self.JSON_FILE_PATH, main_key=self.current_app, key='python_path', value=python_path)
+
+
     def update_current_file(self):
-        self.current_file = self.select_file_button.text()
+        file: str = self.select_file_button.text()
+        self.current_file = file
+        set_value(json_file=self.JSON_FILE_PATH, main_key=self.current_app, key='file', value=file)
         
         
     def update_launch_button(self):
