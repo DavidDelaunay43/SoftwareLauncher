@@ -21,13 +21,7 @@ class AppFinder:
     }
     
     
-    def __init__(self, program_files=None, apps=None) -> dict:
-        
-        if program_files:
-            self.PROGRAM_FILES = program_files
-            
-        if apps:
-            self.APPS = apps
+    def __init__(self, write_json: str = None) -> dict:
             
         self.app_dict['blender']['path'] = self.find_blender()
         self.app_dict['krita']['path'] = self.find_krita()
@@ -37,6 +31,11 @@ class AppFinder:
         self.app_dict['nuke']['path'] = self.find_nuke()
         self.app_dict['photoshop']['path'] = self.find_photoshop()
         self.app_dict['zbrush']['path'] = self.find_zbrush()
+        
+        self.app_dict['houdini']['pref'] = self.find_houdini_pref()
+        self.app_dict['mari']['pref'] = self.find_mari_pref()
+        self.app_dict['maya']['pref'] = self.find_maya_pref()
+        self.app_dict['nuke']['pref'] = self.find_nuke_pref()
             
     
     def find_directory(self, parent_directory: str, directory_string: str, return_type: str = 'str', exclude_strings = []) -> str:
@@ -114,6 +113,24 @@ class AppFinder:
         exe: str = 'ZBrush.exe'
         parent_dir: str = os.path.join(self.PROGRAM_FILES, self.find_directory(parent_directory=self.PROGRAM_FILES, directory_string='Maxon ZBrush '))
         return os.path.join(parent_dir, exe).replace('\\', '/')
+
+
+    def find_houdini_pref(self) -> str:
+        documents_folder: str = os.path.join(os.path.expanduser("~"), 'Documents')
+        return os.path.join(documents_folder, self.find_directory(parent_directory=documents_folder, directory_string='houdini'))
+    
+    
+    def find_maya_pref(self) -> str:
+        documents_folder: str = os.path.join(os.path.expanduser("~"), 'Documents')
+        return os.path.join(documents_folder, self.find_directory(parent_directory=documents_folder, directory_string='maya'))
+    
+    
+    def find_mari_pref(self) -> str:
+        return os.path.join(os.path.expanduser("~"), '.mari')
+    
+    
+    def find_nuke_pref(self) -> str:
+        return os.path.join(os.path.expanduser("~"), '.nuke')
 
 
 if __name__ == '__main__':

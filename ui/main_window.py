@@ -10,7 +10,7 @@ from PySide2.QtWidgets import (
     QRadioButton
 )
 from PySide2.QtCore import Qt
-from PySide2.QtGui import QIcon, QPixmap
+from PySide2.QtGui import QIcon
 import os
 import subprocess
 from ui.custom_button import CustomButton
