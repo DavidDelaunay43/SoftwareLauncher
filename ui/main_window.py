@@ -12,6 +12,7 @@ from PySide2.QtWidgets import (
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QIcon
 import os
+from pathlib import Path
 import subprocess
 from ui.custom_button import CustomButton
 from logic.app_finder import AppFinder
@@ -22,14 +23,14 @@ class MainWindow(QMainWindow):
     
     
     VERSION = '1.1.0'
-    JSON_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'user_data', 'software_launcher_infos.json')
+    JSON_FILE_PATH: Path = Path.cwd().joinpath('user_data', 'software_launcher_infos.json')
     apps = []
     paths = []
-    current_app = None
-    current_path = None
-    current_pref = None
-    current_python_path = None
-    current_file = None
+    current_app: str = None
+    current_path: Path = None
+    current_pref: Path = None
+    current_python_path: Path = None
+    current_file: Path = None
     
     
     def __init__(self):
@@ -42,7 +43,7 @@ class MainWindow(QMainWindow):
         
         
     def get_app_infos(self):
-        if not os.path.exists(self.JSON_FILE_PATH):
+        if not self.JSON_FILE_PATH.exists():
             AppFinder(write_json=self.JSON_FILE_PATH)
             
         self.app_dict: dict = json_to_dict(self.JSON_FILE_PATH)
@@ -136,21 +137,18 @@ class MainWindow(QMainWindow):
         
         
     def update_current_pref(self):
-        pref: str = self.select_pref_button.text()
-        self.current_pref = pref
-        set_value(json_file=self.JSON_FILE_PATH, main_key=self.current_app, key='pref', value=pref)
+        self.current_pref: Path = Path(self.select_pref_button.text())
+        set_value(json_file=self.JSON_FILE_PATH, main_key=self.current_app, key='pref', value=self.current_pref)
     
     
     def update_current_python_path(self):
-        python_path: str = self.select_python_path_button.text()
-        self.current_python_path = python_path
-        set_value(json_file=self.JSON_FILE_PATH, main_key=self.current_app, key='python_path', value=python_path)
+        self.current_python_path: Path = Path(self.select_python_path_button.text())
+        set_value(json_file=self.JSON_FILE_PATH, main_key=self.current_app, key='python_path', value=self.current_python_path)
 
 
     def update_current_file(self):
-        file: str = self.select_file_button.text()
-        self.current_file = file
-        set_value(json_file=self.JSON_FILE_PATH, main_key=self.current_app, key='file', value=file)
+        self.current_file: Path = Path(self.select_file_button.text())
+        set_value(json_file=self.JSON_FILE_PATH, main_key=self.current_app, key='file', value=self.current_file)
         
         
     def update_launch_button(self):
@@ -158,6 +156,12 @@ class MainWindow(QMainWindow):
         
         
     def update_button(self):
+        button_dict: dict = {
+            self.select_pref_button: self.current_pref,
+            self.select_python_path_button: self.current_python_path,
+            self.select_file_button: self.current_file,
+        }
+        
         button: QPushButton = self.sender()
         button_text = button.text()
 
@@ -165,7 +169,7 @@ class MainWindow(QMainWindow):
         file_dialog.setFileMode(QFileDialog.AnyFile)
 
         if button_text:
-            file_dialog.setDirectory(os.path.dirname(button_text))
+            file_dialog.setDirectory(str(Path(button_text).parent))
                 
         options = QFileDialog.Options()
         
@@ -177,16 +181,11 @@ class MainWindow(QMainWindow):
         if not new_path:
             return
         
-        button.setText(new_path)
-        
-        button_dict = {
-            self.select_pref_button: self.update_current_pref,
-            self.select_python_path_button: self.update_current_python_path,
-            self.select_file_button: self.update_current_file,
-        }
-        
-        func = button_dict.get(button)
-        func()
+        new_path = Path(new_path)
+        current_value: Path = button_dict.get(button)
+        current_value = new_path
+        set_value(json_file=self.JSON_FILE_PATH, main_key=self.current_app, key='python_path', value=new_path)
+        button.setText(str(current_value))
         
         
     def launch_app(self):
@@ -217,5 +216,5 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(f'Software launcher - {self.VERSION}')
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setMinimumSize(450, 250)
-        self.setStyleSheet(open(os.path.join(os.path.dirname(__file__), "style.css")).read())
-        self.setWindowIcon(QIcon(os.path.join(os.path.dirname(__file__), "icon.ico")))
+        self.setStyleSheet(open(Path.cwd().joinpath('ui', 'style.css')).read())
+        self.setWindowIcon(QIcon(str(Path.cwd().joinpath('ui', 'icon.ico'))))

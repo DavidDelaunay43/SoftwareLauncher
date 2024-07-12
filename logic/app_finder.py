@@ -1,43 +1,30 @@
-import json
-import os
+from pathlib import Path
 from .json_funcs import dict_to_json
 
 
 class AppFinder:
     
     
-    PROGRAM_FILES = 'C:/Program Files'
-    APPS = 'blender', 'it', 'krita', 'houdini', 'maya', 'nuke', 'photoshop', 'substance_designer', 'substance_painter', 'zbrush'
-    app_dict = {
-        'blender': {'path': None, 'pref': None, 'python_path': None, 'file': None},
-        'it': {'path': None, 'pref': None, 'python_path': None, 'file': None},
-        'krita': {'path': None, 'pref': None, 'python_path': None, 'file': None},
-        'houdini': {'path': None, 'pref': None, 'python_path': None, 'file': None},
-        'mari': {'path': None, 'pref': None, 'python_path': None, 'file': None},
-        'maya': {'path': None, 'pref': None, 'python_path': None, 'file': None},
-        'nuke': {'path': None, 'pref': None, 'python_path': None, 'file': None},
-        'photoshop': {'path': None, 'pref': None, 'python_path': None, 'file': None},
-        'substance_designer': {'path': None, 'pref': None, 'python_path': None, 'file': None},
-        'substance_painter': {'path': None, 'pref': None, 'python_path': None, 'file': None},
-        'zbrush': {'path': None, 'pref': None, 'python_path': None, 'file': None}
-    }
+    PROGRAM_FILES: Path = Path('C:/Program Files')
+    APPS: tuple = 'blender', 'it', 'krita', 'houdini', 'maya', 'mari', 'nuke', 'photoshop', 'substance_designer', 'substance_painter', 'zbrush'
+    app_dict = {app: {'path': None, 'pref': None, 'python_path': None, 'file': None} for app in APPS}
     
     
     def __init__(self, write_json: str = None) -> dict:
             
-        self.app_dict['blender']['path'] = self.find_blender()
-        self.app_dict['krita']['path'] = self.find_krita()
-        self.app_dict['houdini']['path'] = self.find_houdini()
-        self.app_dict['mari']['path'] = self.find_mari()
-        self.app_dict['maya']['path'] = self.find_maya()
-        self.app_dict['nuke']['path'] = self.find_nuke()
-        self.app_dict['photoshop']['path'] = self.find_photoshop()
-        self.app_dict['zbrush']['path'] = self.find_zbrush()
+        self.app_dict['blender']['path'] = str(self.find_blender())
+        self.app_dict['krita']['path'] = str(self.find_krita())
+        self.app_dict['houdini']['path'] = str(self.find_houdini())
+        self.app_dict['mari']['path'] = str(self.find_mari())
+        self.app_dict['maya']['path'] = str(self.find_maya())
+        self.app_dict['nuke']['path'] = str(self.find_nuke())
+        self.app_dict['photoshop']['path'] = str(self.find_photoshop())
+        self.app_dict['zbrush']['path'] = str(self.find_zbrush())
         
-        self.app_dict['houdini']['pref'] = self.find_houdini_pref()
-        self.app_dict['mari']['pref'] = self.find_mari_pref()
-        self.app_dict['maya']['pref'] = self.find_maya_pref()
-        self.app_dict['nuke']['pref'] = self.find_nuke_pref()
+        self.app_dict['houdini']['pref'] = str(self.find_houdini_pref())
+        self.app_dict['mari']['pref'] = str(self.find_mari_pref())
+        self.app_dict['maya']['pref'] = str(self.find_maya_pref())
+        self.app_dict['nuke']['pref'] = str(self.find_nuke_pref())
         
         if write_json:
             self.write_json_file(json_file=write_json)
@@ -47,111 +34,81 @@ class AppFinder:
         dict_to_json(dictionary=self.app_dict, json_file_path=json_file)
         
             
-    def find_directory(self, parent_directory: str, directory_string: str, return_type: str = 'str', exclude_strings = []) -> str:
-        directories: list[str] = os.listdir(parent_directory)
-        directories_to_return = []
-        for dir in directories:
-            if dir.startswith(directory_string):
-                if dir in exclude_strings:
+    def find_directory(self, parent_directory: Path, directory_string: str, exclude_strings = [], exe=False) -> Path:
+        for dir in parent_directory.iterdir():
+            dir_name: str = dir.name
+            if dir_name.startswith(directory_string):
+                if dir_name in exclude_strings:
                         continue
-                if return_type == 'str':
-                    return dir
+                if exe:
+                    if dir_name.endswith('.exe'):
+                        return dir
                 else:
-                    directories_to_return.append(dir)
-        return directories_to_return
+                    return dir
             
             
-    def find_blender(self) -> str:
+    def find_blender(self) -> Path:
         exe: str = 'blender.exe'
-        parent_dir: str = os.path.join(self.PROGRAM_FILES, 'Blender Foundation')
+        parent_dir: Path = self.PROGRAM_FILES.joinpath('Blender Foundation')
         dir_string: str = 'Blender '
-        version_dir: str = self.find_directory(parent_directory=parent_dir, directory_string=dir_string)
-        return os.path.join(parent_dir, version_dir, exe).replace('\\', '/')
+        return self.find_directory(parent_directory=parent_dir, directory_string=dir_string).joinpath(exe)
+        
     
-    
-    def find_krita(self) -> str:
+    def find_krita(self) -> Path:
         exe: str = 'krita.exe'
-        parent_dir: str = os.path.join(self.PROGRAM_FILES, 'Krita (x64)')
-        return os.path.join(parent_dir, 'bin', exe).replace('\\', '/')
+        return self.PROGRAM_FILES.joinpath('Krita (x64)', 'bin', exe)
     
     
-    def find_houdini(self) -> str:
+    def find_houdini(self) -> Path:
         exe: str = 'houdini.exe'
-        parent_dir: str = os.path.join(self.PROGRAM_FILES, 'Side Effects Software')
+        parent_dir: Path = self.PROGRAM_FILES.joinpath('Side Effects Software')
         dir_string: str = 'Houdini'
-        version_dir: str = self.find_directory(parent_directory=parent_dir, directory_string=dir_string, exclude_strings=['Houdini Engine', 'Houdini Server'])
-        return os.path.join(parent_dir, version_dir, 'bin', exe).replace('\\', '/')
+        return self.find_directory(parent_directory=parent_dir, directory_string=dir_string, exclude_strings=['Houdini Engine', 'Houdini Server']).joinpath('bin', exe)
     
     
-    def find_mari(self) -> str:
+    def find_mari(self) -> Path:
         mari: str = 'Mari'
-        parent_dir: str = os.path.join(self.PROGRAM_FILES, self.find_directory(parent_directory=self.PROGRAM_FILES, directory_string=mari), 'Bundle', 'bin')
-        exe: str = self.find_directory(parent_directory=parent_dir, directory_string=mari)
-        return os.path.join(parent_dir, exe).replace('\\', '/')
+        parent_dir: Path = self.PROGRAM_FILES.joinpath(self.find_directory(parent_directory=self.PROGRAM_FILES, directory_string=mari), 'Bundle', 'bin')
+        return self.find_directory(parent_directory=parent_dir, directory_string=mari)
     
-    
-    def find_maya(self) -> str:
+    def find_maya(self) -> Path:
         exe: str = 'maya.exe'
-        parent_dir: str = os.path.join(self.PROGRAM_FILES, 'Autodesk')
+        parent_dir: Path = self.PROGRAM_FILES.joinpath('Autodesk')
         dir_string: str = 'Maya'
-        version_dir: str = self.find_directory(parent_directory=parent_dir, directory_string=dir_string)
-        return os.path.join(parent_dir, version_dir, 'bin', exe).replace('\\', '/')
+        return self.find_directory(parent_directory=parent_dir, directory_string=dir_string).joinpath('bin', exe)
     
     
-    def find_nuke(self) -> str:
+    def find_nuke(self) -> Path:
         nuke: str = 'Nuke'
-        parent_dir: str = os.path.join(self.PROGRAM_FILES, self.find_directory(parent_directory=self.PROGRAM_FILES, directory_string=nuke))
-        files: list[str] = self.find_directory(parent_directory=parent_dir, directory_string=nuke, return_type='list')
-        exe: str
-        for file in files:
-            if file.endswith('.exe'):
-                exe = file
-                break
-        return os.path.join(parent_dir, exe).replace('\\', '/')
+        parent_dir: Path = self.PROGRAM_FILES.joinpath(self.find_directory(parent_directory=self.PROGRAM_FILES, directory_string=nuke))
+        return self.find_directory(parent_directory=parent_dir, directory_string=nuke, exe=True)
     
     
-    def find_photoshop(self) -> str:
+    def find_photoshop(self) -> Path:
         exe: str = 'Photoshop.exe'
-        parent_dir: str = os.path.join(self.PROGRAM_FILES, 'Adobe')
+        parent_dir: Path = self.PROGRAM_FILES.joinpath('Adobe')
         dir_string: str = 'Adobe Photoshop '
-        version_dir: str = self.find_directory(parent_directory=parent_dir, directory_string=dir_string)
-        return os.path.join(parent_dir, version_dir, exe).replace('\\', '/')
+        return self.find_directory(parent_directory=parent_dir, directory_string=dir_string).joinpath(exe)
     
     
-    def find_zbrush(self) -> str:
+    def find_zbrush(self) -> Path:
         exe: str = 'ZBrush.exe'
-        parent_dir: str = os.path.join(self.PROGRAM_FILES, self.find_directory(parent_directory=self.PROGRAM_FILES, directory_string='Maxon ZBrush '))
-        return os.path.join(parent_dir, exe).replace('\\', '/')
+        return self.PROGRAM_FILES.joinpath(self.find_directory(parent_directory=self.PROGRAM_FILES, directory_string='Maxon ZBrush ')).joinpath(exe)
 
 
     def find_houdini_pref(self) -> str:
-        documents_folder: str = os.path.join(os.path.expanduser("~"), 'Documents')
-        return os.path.join(documents_folder, self.find_directory(parent_directory=documents_folder, directory_string='houdini')).replace('\\', '/')
+        documents_folder: Path = Path.home().joinpath('Documents')
+        return documents_folder.joinpath(self.find_directory(parent_directory=documents_folder, directory_string='houdini'))
     
     
-    def find_maya_pref(self) -> str:
-        documents_folder: str = os.path.join(os.path.expanduser("~"), 'Documents')
-        return os.path.join(documents_folder, self.find_directory(parent_directory=documents_folder, directory_string='maya')).replace('\\', '/')
+    def find_maya_pref(self) -> Path:
+        documents_folder: Path = Path.home().joinpath('Documents')
+        return documents_folder.joinpath(self.find_directory(parent_directory=documents_folder, directory_string='maya'))
     
     
-    def find_mari_pref(self) -> str:
-        return os.path.join(os.path.expanduser("~"), '.mari').replace('\\', '/')
+    def find_mari_pref(self) -> Path:
+        return Path.home().joinpath('.mari')
     
     
-    def find_nuke_pref(self) -> str:
-        return os.path.join(os.path.expanduser("~"), '.nuke').replace('\\', '/')
-
-
-if __name__ == '__main__':
-    import subprocess
-    
-    apps = AppFinder()
-    print(apps.app_dict)
-    
-    for app, app_infos in apps.app_dict.items():
-        exe = app_infos['path']
-        if exe:
-            if not os.path.exists(exe):
-                continue
-            print(exe)
-            subprocess.Popen([exe])
+    def find_nuke_pref(self) -> Path:
+        return Path.home().joinpath('.nuke')
