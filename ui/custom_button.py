@@ -1,13 +1,15 @@
+from pathlib import Path
+from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
     QPushButton,
     QAction,
     QMenu
 )
-from PySide2.QtCore import Qt
 
 
 class CustomButton(QPushButton):
     
+    JSON_FILE_PATH: Path = Path.cwd().joinpath('user_data', 'software_launcher_infos.json')
     
     def __init__(self):
         super(CustomButton, self).__init__()

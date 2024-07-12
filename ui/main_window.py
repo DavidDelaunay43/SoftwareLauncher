@@ -1,3 +1,8 @@
+import os
+from pathlib import Path
+import subprocess
+from PySide2.QtCore import Qt
+from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import (
     QMainWindow,
     QVBoxLayout,
@@ -9,11 +14,6 @@ from PySide2.QtWidgets import (
     QWidget,
     QRadioButton
 )
-from PySide2.QtCore import Qt
-from PySide2.QtGui import QIcon
-import os
-from pathlib import Path
-import subprocess
 from ui.custom_button import CustomButton
 from logic.app_finder import AppFinder
 from logic.json_funcs import get_value, set_value, json_to_dict
@@ -150,7 +150,7 @@ class MainWindow(QMainWindow):
         self.current_file: Path = Path(self.select_file_button.text())
         set_value(json_file=self.JSON_FILE_PATH, main_key=self.current_app, key='file', value=self.current_file)
         
-        
+
     def update_launch_button(self):
         self.launch_button.setText(f'Launch {self.current_app.capitalize()}')
         
@@ -162,30 +162,33 @@ class MainWindow(QMainWindow):
             self.select_file_button: self.current_file,
         }
         
-        button: QPushButton = self.sender()
-        button_text = button.text()
+        if isinstance(self.sender(), QPushButton):
+            button: QPushButton = self.sender()
+            button_text = button.text()
 
-        file_dialog = QFileDialog()
-        file_dialog.setFileMode(QFileDialog.AnyFile)
+            file_dialog = QFileDialog()
+            file_dialog.setFileMode(QFileDialog.AnyFile)
 
-        if button_text:
-            file_dialog.setDirectory(str(Path(button_text).parent))
-                
-        options = QFileDialog.Options()
-        
-        if button in (self.select_pref_button, self.select_python_path_button):
-            new_path = file_dialog.getExistingDirectory(self, 'Select directory', options=options)
-        else:
-            new_path, _ = file_dialog.getOpenFileName(self, 'Select file', options=options)
+            if button_text:
+                file_dialog.setDirectory(str(Path(button_text).parent))
+                    
+            options = QFileDialog.Options()
             
-        if not new_path:
+            if button in (self.select_pref_button, self.select_python_path_button):
+                new_path = file_dialog.getExistingDirectory(self, 'Select directory', options=options)
+            else:
+                new_path, _ = file_dialog.getOpenFileName(self, 'Select file', options=options)
+                
+            if not new_path:
+                return
+            
+            new_path = Path(new_path)
+            current_value: Path = button_dict.get(button)
+            current_value = new_path
+            set_value(json_file=self.JSON_FILE_PATH, main_key=self.current_app, key='python_path', value=new_path)
+            button.setText(str(current_value))
             return
         
-        new_path = Path(new_path)
-        current_value: Path = button_dict.get(button)
-        current_value = new_path
-        set_value(json_file=self.JSON_FILE_PATH, main_key=self.current_app, key='python_path', value=new_path)
-        button.setText(str(current_value))
         
         
     def launch_app(self):
@@ -196,7 +199,8 @@ class MainWindow(QMainWindow):
         pref_dict = {
             'houdini': 'HOUDINI_USER_PREF_DIR',
             'maya': 'MAYA_APP_DIR',
-            'nuke': 'NUKE_PATH'
+            'nuke': 'NUKE_PATH',
+            'mari': 'MARI_PATH'
         }
         if not self.current_app in ('houdini', 'maya', 'nuke'):
             subprocess.Popen(app_args)
