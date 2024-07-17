@@ -114,6 +114,9 @@ class MainWindow(QMainWindow):
         radio_button: QPushButton
         for radio_button in self.radio_buttons:
             radio_button.toggled.connect(self.update_current_app)
+            radio_button.toggled.connect(self.update_current_pref)
+            radio_button.toggled.connect(self.update_current_python_path)
+            radio_button.toggled.connect(self.update_current_file)
             radio_button.toggled.connect(self.update_launch_button)
             
         self.select_pref_button.clicked.connect(self.update_button)
@@ -130,7 +133,7 @@ class MainWindow(QMainWindow):
         self.current_app = self.sender().text().lower()
         self.current_path = self.app_dict[self.current_app]['path']
         print(f'Current app : {self.current_app}')
-        print(f'Current path : {self.current_path}')
+        print(f'Current app path : {self.current_path}')
         self.select_pref_button.setText(get_value(json_file=self.JSON_FILE_PATH, main_key=self.current_app, key='pref'))
         self.select_python_path_button.setText(get_value(json_file=self.JSON_FILE_PATH, main_key=self.current_app, key='python_path'))
         self.select_file_button.setText(get_value(json_file=self.JSON_FILE_PATH, main_key=self.current_app, key='file'))
@@ -139,16 +142,19 @@ class MainWindow(QMainWindow):
     def update_current_pref(self):
         self.current_pref: Path = Path(self.select_pref_button.text())
         set_value(json_file=self.JSON_FILE_PATH, main_key=self.current_app, key='pref', value=self.current_pref)
+        print(f'Current pref folder : {self.current_pref}')
     
     
     def update_current_python_path(self):
         self.current_python_path: Path = Path(self.select_python_path_button.text())
         set_value(json_file=self.JSON_FILE_PATH, main_key=self.current_app, key='python_path', value=self.current_python_path)
+        print(f'Current python path : {self.current_python_path}')
 
 
     def update_current_file(self):
         self.current_file: Path = Path(self.select_file_button.text())
         set_value(json_file=self.JSON_FILE_PATH, main_key=self.current_app, key='file', value=self.current_file)
+        print(f'Current file path : {self.current_file}')
         
 
     def update_launch_button(self):
@@ -193,7 +199,7 @@ class MainWindow(QMainWindow):
         
     def launch_app(self):
         app_args = [self.current_path]
-        if self.current_file:
+        if self.current_file and str(self.current_file) != '.':
             app_args.append(self.current_file)
         
         pref_dict = {
@@ -209,9 +215,9 @@ class MainWindow(QMainWindow):
         pref_name = pref_dict[self.current_app]
         env = os.environ.copy()
         if self.current_pref and os.path.exists(self.current_pref):
-            env[pref_name] = self.current_pref
+            env[pref_name] = str(self.current_pref)
         if self.current_python_path and os.path.exists(self.current_python_path):
-            env["PYTHONPATH"] = self.current_python_path
+            env["PYTHONPATH"] = str(self.current_python_path)
             
         subprocess.Popen(app_args, env=env)
 

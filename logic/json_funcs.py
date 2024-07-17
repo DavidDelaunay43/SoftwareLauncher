@@ -37,10 +37,14 @@ def dict_to_json(dictionary: dict, json_file_path: Union[str, Path]) -> None:
         
 def get_value(json_file: str, main_key: str, key: str) -> str:
     
-    return json_to_dict(json_file_path=json_file).get(main_key).get(key)
+    value = json_to_dict(json_file_path=json_file).get(main_key).get(key)
+    value = '' if value == '.' else value
+    return value
 
 
 def set_value(json_file: str, main_key: str, key: str, value: str) -> None:
+    
+    value = '' if value == '.' else value
     
     if isinstance(value, Path):
         value = str(value)
